@@ -49,3 +49,14 @@ python3 -m unittest test_tom05_selfhost -v
 **Tom05ivier-commits-1.0**, pemilik **Tomi vier**. Lihat `LICENSE` dan
 `TOM05-FLASH-FREE-NOTICE.md`. Ini bukan model terlatih baru; backend inferensi
 disiapkan terpisah oleh pemilik.
+
+### Catatan pemeriksaan privasi
+
+`security_cli.py privacy verify` melaporkan status `BOCOR` untuk repo ini hanya
+karena `TOM05-FLASH-FREE-NOTICE.md` memuat **tanda tangan digital pemilik**
+`(__tomivier)` — 1 temuan `tanda_tangan`. Itu adalah isi sah dan publik dari
+NOTICE hak cipta, bukan kredensial. Seluruh kategori `secrets` bernilai 0
+(tidak ada token GitHub, OpenAI, bearer, kata sandi, email, atau data pribadi).
+Tanda tangan sengaja dipertahankan; detector belum memiliki pengecualian untuk
+dokumen NOTICE. `.gitignore` telah ditambahkan untuk mengecualikan
+`credentials/`, `.env`, dan kunci.
