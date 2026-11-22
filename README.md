@@ -9,13 +9,27 @@
 Server OpenAI-compatible mandiri untuk identitas **Tom05 flash Free**.
 Tidak terhubung ke model pihak ketiga mana pun.
 
+## Apa yang menjawab
+
+- **Tanpa endpoint**: server menjawab dari **model pengetahuan retrieval**
+  (`system/tom05_knowledge.py`) yang mengindeks 221 berkas data workspace
+  (1.240 potongan), sudah disaring `security.privacy.redact`. Jawaban
+  menyertakan `sources` dan label `trained: false`.
+- **Dengan endpoint milik pemilik** (`TOM05_SELFHOST_ENDPOINT`, wajib loopback):
+  permintaan diteruskan ke server inferensi lokal itu.
+
+Ini **bukan model neural terlatih**. Tidak ada bobot, dataset training, atau
+pelatihan. Model pengetahuan bekerja dengan mengambil potongan data yang paling
+relevan (TF-IDF ringan, tanpa dependensi eksternal).
+
 ## Prinsip
 
 - Hanya mengiklankan `tom05-flash-free`.
-- Menolak chat dengan HTTP 503 sampai endpoint inferensi milik pemilik diset.
 - Endpoint wajib **loopback** (`http://127.0.0.1` / `http://localhost`);
   alamat eksternal ditolak.
 - Tidak membaca, menyimpan, atau mencetak kredensial. Prompt tidak masuk log.
+- Setiap jawaban membawa metadata jujur: `kind: retrieval-grounded`,
+  `trained: false`.
 
 ## Menjalankan
 
