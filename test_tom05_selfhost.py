@@ -87,18 +87,25 @@ class SelfHostHttpTests(unittest.TestCase):
         self.assertEqual(data["total"], 1)
         self.assertEqual(data["data"][0]["id"], "tom05-flash-free")
 
-    def test_chat_refused_without_endpoint(self) -> None:
+    def test_chat_answered_by_knowledge_model_without_endpoint(self) -> None:
+        """Tanpa endpoint, server menjawab via retrieval (bukan 503, bukan pihak ke-3)."""
         req = urllib.request.Request(
             f"http://127.0.0.1:{self.PORT}/v1/chat/completions",
-            data=json.dumps({"model": "tom05-flash-free", "messages": []}).encode(),
+            data=json.dumps({
+                "model": "tom05-flash-free",
+                "messages": [{"role": "user", "content": "apa itu alur relai chat tom05"}],
+            }).encode(),
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with self.assertRaises(urllib.error.HTTPError) as ctx:
-            urllib.request.urlopen(req, timeout=5)
-        self.assertEqual(ctx.exception.code, 503)
-        body = json.loads(ctx.exception.read())
-        self.assertIn("belum terhubung", body["error"])
+        with urllib.request.urlopen(req, timeout=90) as response:
+            body = json.loads(response.read())
+        self.assertEqual(body["model"], "tom05-flash-free")
+        content = body["choices"][0]["message"]["content"]
+        self.assertIn("retrieval", content)
+        self.assertFalse(body["tom05"]["trained"])
+        self.assertEqual(body["tom05"]["kind"], "retrieval-grounded")
+        self.assertTrue(body["tom05"]["sources"])
 
 
 if __name__ == "__main__":
